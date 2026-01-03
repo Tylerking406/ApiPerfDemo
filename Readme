@@ -1,0 +1,170 @@
+# 🚀 API Performance Tracer (.NET)
+
+A lightweight, developer-focused tool that helps you understand **where your API time is being spent** — before production.
+
+Think of it as a **“Lighthouse for APIs”** — providing a simple breakdown of request latency across the backend pipeline.
+
+---
+
+## 🎯 Project Goal
+
+Give developers clear visibility into API performance by breaking down request time into meaningful stages, such as:
+
+Total: 320ms
+├─ Middleware Overhead: 10ms
+├─ Controller Execution: 140ms
+└─ Response Pipeline: 170ms
+
+yaml
+Copy code
+
+Instead of only seeing *“this request took 320ms”*, the tool helps you understand **why** it took that long and where bottlenecks exist.
+
+---
+
+## 🧩 Phase 1 — MVP Scope
+
+### ✅ Step 1 — Request Timing Middleware (Core)
+
+Implement an ASP.NET Core middleware that measures:
+
+- total request time  
+- middleware overhead  
+- controller execution time  
+- response pipeline time  
+
+The middleware will output timing data in:
+
+- human-readable console logs  
+- machine-readable JSON trace format  
+
+> This forms the **foundation of the tool**.
+
+---
+
+### ⏳ Step 2 — Database Timing (EF Core first)
+
+Add optional instrumentation to capture database performance:
+
+- total DB execution time  
+- number of queries  
+- per-query duration  
+- slow query detection  
+
+Future support:
+
+- Dapper  
+- ADO.NET  
+- additional database providers via adapters  
+
+---
+
+### ⏳ Step 3 — Trace Export
+
+Enable saving performance traces as JSON files so they can be:
+
+- inspected later  
+- compared between runs  
+- consumed in CI benchmarking  
+- visualized by external tools  
+
+The trace format will loosely follow:
+
+- OpenTelemetry concepts  
+- Chrome Trace / waterfall timing style  
+
+---
+
+### ⏳ Step 4 — Simple Web UI Viewer (Future)
+
+Provide a lightweight offline viewer that:
+
+- visualizes traces as a **timeline / waterfall**  
+- highlights bottlenecks  
+- offers Lighthouse-style improvement hints  
+
+The UI will be built **after the core features are stable**.
+
+---
+
+## 🏗️ Planned Project Structure
+
+api-perf/
+├─ ApiPerfDemo/ # Sample API using the tool
+├─ ApiPerf.Core/ # Library with middleware + tracers
+├─ ApiPerf.CLI/ # (future) CLI API test runner
+└─ README.md
+
+yaml
+Copy code
+
+Development approach:
+
+1. Build features inside `ApiPerfDemo`  
+2. Extract reusable logic into `ApiPerf.Core` as a portable library  
+
+---
+
+## 💡 Design Principles
+
+- ⚡ Developer-first  
+- 🧩 Zero-config setup  
+- 🛠️ Works locally & in CI  
+- 🧪 Focused on pre-production debugging  
+- 👐 Open-source & extensible  
+- 🏗️ Lightweight — not a full APM tool  
+
+This project is **not intended to replace** Datadog / New Relic / Grafana.  
+Its purpose is to be:
+
+> simple, fast, and useful during development.
+
+---
+
+## 🏁 Status
+
+**Phase 1 — In Progress**
+
+Current work:
+
+- ✔️ Environment setup  
+- ⏳ Step 1 — Request Timing Middleware  
+
+Upcoming:
+
+- database timing instrumentation  
+- trace export support  
+
+---
+
+## 🤝 Contributions & Roadmap
+
+Areas planned for community contributions:
+
+- framework integrations  
+- database adapters  
+- performance benchmarking ideas  
+- documentation & examples  
+
+A public roadmap and issue tracker will be added after the MVP is ready.
+
+---
+
+## 📚 License
+
+Planned license: **MIT**  
+(Open, permissive, developer-friendly)
+
+---
+
+## 👥 Authors / Maintainers
+
+Early-stage community project — contributors welcome.
+
+---
+
+## 🚧 Work in Progress
+
+This repository is being built step-by-step with a focus on learning, collaboration, and improving backend performance visibility.
+
+Follow along, experiment, test, and help make API optimization easier for everyone 🚀

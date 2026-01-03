@@ -1,0 +1,54 @@
+## Build results
+bin/
+obj/
+out/
+artifacts/
+
+## User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio / JetBrains Rider
+.vs/
+.idea/
+*.DotSettings.user
+
+## Logs
+*.log
+logs/
+
+## Environment & secrets
+*.env
+*.env.*
+appsettings.Development.json
+secrets.json
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Packaging
+*.nupkg
+*.snupkg
+
+## NuGet
+packages/
+*.NuGet.props
+*.NuGet.targets
+
+## Coverage / analysis
+coverage/
+TestResults/
+*.coverage
+*.coveragexml
+
+## Temporary files
+*.tmp
+*.temp
+
+## Node (if frontend later joins repo)
+node_modules/
+dist/
