@@ -15,11 +15,18 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<PerformanceTimingMiddleware>();
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
+
+app.MapGet("/slow", async () =>
+{
+    await Task.Delay(500);
+    return "Slow endpoint";
+});
+
 
 app.MapGet("/weatherforecast", () =>
 {
@@ -33,6 +40,7 @@ app.MapGet("/weatherforecast", () =>
         .ToArray();
     return forecast;
 })
+
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
