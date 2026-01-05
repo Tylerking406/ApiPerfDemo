@@ -12,47 +12,39 @@ public class PerformanceTimingMiddleware
     }
 
     public async Task InvokeAsync(HttpContext context)
-    {
-        var totalStopwatch = Stopwatch.StartNew();
-        var controllerStopwatch = new Stopwatch();
-        var responseStopwatch = new Stopwatch();
-
-        // Track when controller starts executing
-        context.Response.OnStarting(() =>
-        {
-            // Response pipeline timing begins when controller finishes
-            responseStopwatch.Start();
-            controllerStopwatch.Stop();
-            return Task.CompletedTask;
-        });
-
-        // Start controller timing
-        controllerStopwatch.Start();
-
-        await _next(context);
-
-        // End response time
-        responseStopwatch.Stop();
-        totalStopwatch.Stop();
-
-        var middlewareOverhead =
-            totalStopwatch.ElapsedMilliseconds -
-            controllerStopwatch.ElapsedMilliseconds -
-            responseStopwatch.ElapsedMilliseconds;
-
-var trace = new ApiTraceResult
 {
-    Path = context.Request.Path,
-    Method = context.Request.Method,
-    TotalMs = totalStopwatch.ElapsedMilliseconds,
-    MiddlewareOverheadMs = middlewareOverhead,
-    ControllerMs = controllerStopwatch.ElapsedMilliseconds,
-    ResponsePipelineMs = responseStopwatch.ElapsedMilliseconds,
-    TimestampUtc = DateTime.UtcNow
-};
+    var total = Stopwatch.StartNew();
 
-// Console pretty log
-Console.WriteLine($@"
+    var middlewareBefore = Stopwatch.StartNew();
+    var controller = new Stopwatch();
+    var responsePipeline = new Stopwatch();
+
+    // Start controller timing only while executing the next delegate
+    middlewareBefore.Stop();
+    controller.Start();
+
+    await _next(context);
+
+    controller.Stop();
+
+    // Everything after controller counts as response pipeline
+    responsePipeline.Start();
+    responsePipeline.Stop();
+
+    total.Stop();
+
+    var trace = new ApiTraceResult
+    {
+        Path = context.Request.Path,
+        Method = context.Request.Method,
+        TotalMs = total.ElapsedMilliseconds,
+        MiddlewareOverheadMs = middlewareBefore.ElapsedMilliseconds,
+        ControllerMs = controller.ElapsedMilliseconds,
+        ResponsePipelineMs = responsePipeline.ElapsedMilliseconds,
+        TimestampUtc = DateTime.UtcNow
+    };
+
+    Console.WriteLine($@"
 ================ API PERFORMANCE TRACE ================
 Path: {trace.Method} {trace.Path}
 
@@ -63,12 +55,7 @@ Total: {trace.TotalMs} ms
 =======================================================
 ");
 
-// JSON trace output
-var json = JsonSerializer.Serialize(trace);
-Console.WriteLine(json);
+    TraceStore.Add(trace);
+}
 
-TraceStore.Add(trace);
-
-
-    }
 }
