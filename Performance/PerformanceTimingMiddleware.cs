@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Text.Json;
+
 
 public class PerformanceTimingMiddleware
 {
@@ -38,15 +40,32 @@ public class PerformanceTimingMiddleware
             controllerStopwatch.ElapsedMilliseconds -
             responseStopwatch.ElapsedMilliseconds;
 
-        Console.WriteLine($@"
-================ API PERFORMANCE TRACE ================
-Path: {context.Request.Method} {context.Request.Path}
+var trace = new ApiTraceResult
+{
+    Path = context.Request.Path,
+    Method = context.Request.Method,
+    TotalMs = totalStopwatch.ElapsedMilliseconds,
+    MiddlewareOverheadMs = middlewareOverhead,
+    ControllerMs = controllerStopwatch.ElapsedMilliseconds,
+    ResponsePipelineMs = responseStopwatch.ElapsedMilliseconds,
+    TimestampUtc = DateTime.UtcNow
+};
 
-Total: {totalStopwatch.ElapsedMilliseconds} ms
- ├─ Middleware Overhead: {middlewareOverhead} ms
- ├─ Controller Execution: {controllerStopwatch.ElapsedMilliseconds} ms
- └─ Response Pipeline: {responseStopwatch.ElapsedMilliseconds} ms
+// Console pretty log
+Console.WriteLine($@"
+================ API PERFORMANCE TRACE ================
+Path: {trace.Method} {trace.Path}
+
+Total: {trace.TotalMs} ms
+ ├─ Middleware Overhead: {trace.MiddlewareOverheadMs} ms
+ ├─ Controller Execution: {trace.ControllerMs} ms
+ └─ Response Pipeline: {trace.ResponsePipelineMs} ms
 =======================================================
 ");
+
+// JSON trace output
+var json = JsonSerializer.Serialize(trace);
+Console.WriteLine(json);
+
     }
 }
