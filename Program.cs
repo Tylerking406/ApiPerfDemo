@@ -44,6 +44,15 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+//Endpoint to view traces
+app.MapGet("/traces", () =>
+{
+    return Results.Ok(TraceStore.GetAll());
+})
+.WithName("GetTraces")
+.WithOpenApi();
+
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

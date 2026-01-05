@@ -67,5 +67,8 @@ Total: {trace.TotalMs} ms
 var json = JsonSerializer.Serialize(trace);
 Console.WriteLine(json);
 
+TraceStore.Add(trace);
+
+
     }
 }
